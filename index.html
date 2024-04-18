@@ -15,7 +15,7 @@
     <ul id="chat"></ul>
 
     <script>
-        let socket = new WebSocket('ws://' + window.location.hostname + ':8090');
+        let socket = new WebSocket('ws://' + window.location.hostname + ':3000/ws');
         const chat = document.getElementById('chat');
         const messageInput = document.getElementById('message');
 
