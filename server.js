@@ -27,6 +27,10 @@ app.get('/', (req, res) => {
     res.sendFile(indexPath);
 });
 
+app.get('/ping', (req, res) => {
+    console.log("pong")
+});
+
 // 'aWss' holds the WebSocketServer object for further configuration and handling.
 var aWss = expressWs.getWss('/');
 
