@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Client</title>
+</head>
+
+<body>
+    <h1>WebSocket Client:</h1>
+    <input type="text" id="message" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+    <br>
+    <small id="alert"></small>
+    <ul id="chat"></ul>
+
+    <script>
+        let socket = new WebSocket('ws://' + window.location.hostname + ':8090');
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('message');
+
+        // check websocket connection, if it is open or not, if failed to connect, show error message and retry 4 times
+        let retry = 0;
+        const maxRetry = 10;
+        const interval = setInterval(() => {
+            if (socket.readyState === WebSocket.OPEN) {
+                console.log("Connected to server");
+                const alert = document.getElementById('alert');
+                alert.textContent = "Connected to server";
+                clearInterval(interval);
+            } else if (socket.readyState === WebSocket.CLOSED) {
+                if (retry < maxRetry) {
+                    retry++;
+                    console.log("Retrying to connect to server");
+                    const alert = document.getElementById('alert');
+                    alert.textContent = "Retrying to connect to server [" + retry + "/" + maxRetry + "]";
+                    socket = new WebSocket('ws://localhost:8090');
+                } else {
+                    console.log("Failed to connect to server");
+                    const alert = document.getElementById('alert');
+                    alert.textContent = "Failed to connect to server";
+                    alert.style.color = 'red';
+                    clearInterval(interval);
+                }
+            }
+        }, 5000);
+
+        // Connection opened
+        socket.addEventListener('open', (event) => {
+            const alert = document.getElementById('alert');
+            alert.textContent = "Connected to server";
+            console.log("Connected to server");
+        });
+
+        // Connection closed
+        socket.addEventListener('close', (event) => {
+            const alert = document.getElementById('alert');
+            alert.textContent = "Disconnected from server";
+            console.log("Disconnected from server");
+        });
+
+        // Handle messages received from the server
+        socket.addEventListener('message', (event) => {
+            const li = document.createElement('li');
+            console.log("Received message: ", event.data);
+            li.textContent = event.data;
+            chat.appendChild(li);
+        });
+
+        // Send a message to the server
+        function sendMessage() {
+            const message = messageInput.value;
+            const li = document.createElement('li');
+            li.style.color = 'blue';
+            li.textContent = message;
+            chat.appendChild(li);
+            socket.send(message);
+            messageInput.value = '';
+        }
+    </script>
+</body>
+
+</html>
