@@ -1,5 +1,6 @@
 // Initialize an Express.js server
 require('dotenv').config()
+const port = process.env.PORT || 3000;
 var express = require('express');
 var app = express();
 
@@ -18,12 +19,11 @@ Object.keys(ifaces).forEach((ifname) => {
     });
 });
 console.log(`Server IP address: ${ipAddress}`);
-console.log(`Server started on port ${process.env.PORT}`);
 
 const path = require('path');
 // Serve the index.html file
 app.get('/', (req, res) => {
-    const indexPath = path.join(__dirname, '..', 'index.html');
+    const indexPath = path.join(__dirname, '', 'index.html');
     res.sendFile(indexPath);
 });
 
@@ -31,12 +31,12 @@ app.get('/', (req, res) => {
 var aWss = expressWs.getWss('/');
 
 // Listen for new socket connections
-app.ws('/ws', function (ws, req) {
+app.ws('/', function (ws, req) {
     console.log('Client connected');
     // Listen for messages from clients
     ws.on('message', (message, isBinary) => {
         // log client from which the message was received
-        idMessage = ws._socket.remoteAddress + ":" + ws._socket.remotePort;
+        var idMessage = ws._socket.remoteAddress + ":" + ws._socket.remotePort;
         console.log(`Received message from [${idMessage}]: ${message}`);
         // Broadcast the received message to all connected clients
         aWss.clients.forEach(function (client) {
@@ -52,6 +52,6 @@ app.ws('/ws', function (ws, req) {
     });
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`listening on *:${process.env.PORT}`)
+app.listen(port, () => {
+    console.log(`listening on *:${port}`)
 });
