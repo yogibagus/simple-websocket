@@ -31,10 +31,6 @@ app.get('/ping', (req, res) => {
     res.status(200).json({ message: 'pong', status: 200, data: null });
 });
 
-app.get('/test', (req, res) => {
-    res.status(200).json({ message: 'test', status: 200, data: null });
-});
-
 // 'aWss' holds the WebSocketServer object for further configuration and handling.
 var aWss = expressWs.getWss('/');
 
